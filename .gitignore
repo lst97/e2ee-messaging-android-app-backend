@@ -1,2 +1,6 @@
 .venv
 app/configs/.env
+app/certs
+app/__pycache__
+app/*/__pycache__
+app/*/*/__pycache__
