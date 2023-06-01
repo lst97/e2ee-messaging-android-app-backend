@@ -1,39 +1,40 @@
-from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.exc import OperationalError
 from utils.logger import Logger
 
-logger = Logger(__name__)
-
+import dotenv
 import os
 
-db_username = os.getenv('DB_USERNAME')
-db_password = os.getenv('DB_PASSWORD')
-db_host = os.getenv('DB_HOST')
-db_port = os.getenv('DB_PORT')
-db_name = os.getenv('DB_NAME')
-db_type = os.getenv('DB_TYPE')
+logger = Logger(__name__)
+# dotenv.load_dotenv(os.path.join(os.path.dirname(__file__), 'configs/.env'))
+
+# db_username = os.getenv('DB_USERNAME')
+# db_password = os.getenv('DB_PASSWORD')
+# db_host = os.getenv('DB_HOST')
+# db_port = os.getenv('DB_PORT')
+# db_name = os.getenv('DB_NAME')
+# db_type = os.getenv('DB_TYPE')
 
 # load_dotenv()
+
+DB_TYPE='postgresql'
+DB_HOST='0.0.0.0'
+DB_PORT=5432
+DB_NAME='e2ee'
+
+DB_USERNAME='postgres'
+DB_PASSWORD='postgres'
+
 
 class DatabaseHelper:
     def __init__(self, connection_str):
         self.connection_str = connection_str
         self.on_create()
 
-    def _check_connection(self, engine):
-        try:
-            engine.execute('SELECT 1')
-            return True
-        except OperationalError as e:
-            logger.error(f'Error connecting to the database: {e}')
-            return False
-
     def on_create(self):
         self.engine = create_engine(self.connection_str)
-        if not self._check_connection(self.engine):
-            return
         
         self.base = declarative_base()
         logger.info('Database connection success')
@@ -47,4 +48,4 @@ class DatabaseHelper:
     def Engine(self):
         return self.engine
     
-DbHelper = DatabaseHelper(f"{db_type}://{db_username}:{db_password}@{db_host}:{db_port}/{db_name}")
+DbHelper = DatabaseHelper(f"{DB_TYPE}://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}")
